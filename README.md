@@ -23,6 +23,10 @@ Existe um arquivo "config.json" que possui as seguintes opções: </br>
 "username" -> Usuário utilizado no TASK </br>
 "teamCode" -> Código da equipe no TASK </br>
 
+## Download
+
+Acesse este link https://github.com/luis-olivetti/meu-dia-para-task/releases e escolha a última versão.
+
 ## Gerando .jar
 
 Maven > Execute Maven Goal: mvn clean compile assembly:single
