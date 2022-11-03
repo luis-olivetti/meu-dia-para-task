@@ -70,6 +70,11 @@ public class Window3 extends JDialog {
 
     private void onOK() throws IOException, URISyntaxException {
 
+        Config config = new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
+        if (config == null) {
+            return;
+        }
+
         FileInputStream file = new FileInputStream(getAppPath() + "/apontamentos.xls");
         HSSFWorkbook workbook = new HSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0);
@@ -89,8 +94,8 @@ public class Window3 extends JDialog {
             sheet.createRow(newRow);
             Row row = sheet.getRow(newRow);
 
-            row.createCell(CD_PROJETO).setCellValue("IT_BRKAMBIENTAL");
-            row.createCell(CD_RESPONSAVEL).setCellValue("LUIS.OLIVETTI");
+            row.createCell(CD_PROJETO).setCellValue(config.projectCode);
+            row.createCell(CD_RESPONSAVEL).setCellValue(config.username);
 
             int milleseconds = 0;
 
@@ -106,7 +111,7 @@ public class Window3 extends JDialog {
             row.createCell(DH_INICIO).setCellValue(dateFormat.format(finalDate));
 
             row.createCell((short) 6).setCellValue(1);
-            row.createCell(CD_EQUIPE).setCellValue(380);
+            row.createCell(CD_EQUIPE).setCellValue(config.teamCode);
             row.createCell(COMMENT).setCellValue(textField1.getText());
         }
 
