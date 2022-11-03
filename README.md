@@ -16,6 +16,13 @@ Descreva sua atividade e aperte em "Ok".
 Vai almoçar/encerrar o dia?
 Então marque a opção "Pausa/Encerramento".
 
+## Configuração
+
+Existe um arquivo "config.json" que possui as seguintes opções: </br>
+"projectCode" -> Código do projeto no TASK </br>
+"username" -> Usuário utilizado no TASK </br>
+"teamCode" -> Código da equipe no TASK </br>
+
 ## Gerando .jar
 
 Maven > Execute Maven Goal: mvn clean compile assembly:single
