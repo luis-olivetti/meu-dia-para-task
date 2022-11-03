@@ -18,6 +18,9 @@ Então marque a opção "Pausa/Encerramento".
 
 ## Configuração
 
+Necessário instalar o Java para executar o programa. </br>
+https://www.java.com/pt-BR/download/manual.jsp
+
 Existe um arquivo "config.json" que possui as seguintes opções: </br>
 "projectCode" -> Código do projeto no TASK </br>
 "username" -> Usuário utilizado no TASK </br>
