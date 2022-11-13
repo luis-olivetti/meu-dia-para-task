@@ -32,4 +32,4 @@ Acesse este link https://github.com/luis-olivetti/meu-dia-para-task/releases e e
 
 ## Gerando .jar
 
-Maven > Execute Maven Goal: mvn clean compile assembly:single
+Maven > Execute Maven Goal: `mvn clean compile assembly:single`
