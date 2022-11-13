@@ -30,7 +30,7 @@ public class Main {
                     ww = new Window3();
                     ww.setDefaultCloseOperation(HIDE_ON_CLOSE);
                     ww.setTitle("O que vou fazer?");
-                    ww.setSize(500, 200);
+                    ww.setSize(600, 200);
                     ww.setLocationRelativeTo(null);
                 }
 

@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,8 +20,9 @@ public class Window3 extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTextField textField1;
+    private JTextField txfDescription;
     private JCheckBox cbSaida;
+    private JTextField txfInitialDate;
 
     private static final short CD_PROJETO = 0;
     private static final short CD_RESPONSAVEL = 2;
@@ -34,13 +36,19 @@ public class Window3 extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent componentEvent) {
+                super.componentShown(componentEvent);
+                txfInitialDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date().getTime()));
+            }
+        });
+
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     onOK();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (URISyntaxException ex) {
+                } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -68,7 +76,7 @@ public class Window3 extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    private void onOK() throws IOException, URISyntaxException {
+    private void onOK() throws IOException, URISyntaxException, ParseException {
 
         Config config = new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
         if (config == null) {
@@ -82,7 +90,8 @@ public class Window3 extends JDialog {
         Row lastRow = sheet.getRow(sheet.getLastRowNum());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date finalDate = new Date();
+
+        Date finalDate = txfInitialDate.getText().isEmpty() ? new Date() : new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(txfInitialDate.getText());
 
         if (cbSaida.isSelected()) {
             if (lastRow.getRowNum() > 0) {
@@ -112,7 +121,7 @@ public class Window3 extends JDialog {
 
             row.createCell((short) 6).setCellValue(1);
             row.createCell(CD_EQUIPE).setCellValue(config.teamCode);
-            row.createCell(COMMENT).setCellValue(textField1.getText());
+            row.createCell(COMMENT).setCellValue(txfDescription.getText());
         }
 
         FileOutputStream fileOut = new FileOutputStream(getAppPath() + "/apontamentos.xls", false);
@@ -124,7 +133,7 @@ public class Window3 extends JDialog {
     }
 
     private void resetForm() {
-        textField1.setText("");
+        txfDescription.setText("");
         cbSaida.setSelected(false);
     }
 
@@ -135,6 +144,7 @@ public class Window3 extends JDialog {
 
     public static void main(String[] args) {
         Window3 dialog = new Window3();
+//        dialog.addListener();
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
@@ -210,19 +220,40 @@ public class Window3 extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         contentPane.add(panel3, gbc);
-        textField1 = new JTextField();
+        txfDescription = new JTextField();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel3.add(textField1, gbc);
+        panel3.add(txfDescription, gbc);
+        txfInitialDate = new JTextField();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel3.add(txfInitialDate, gbc);
+        final JLabel label1 = new JLabel();
+        label1.setText("Data/hora inicial (Dica: Use quando esqueceu de iniciar no horário certo)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(label1, gbc);
+        final JLabel label2 = new JLabel();
+        label2.setText("Descrição");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(label2, gbc);
         cbSaida = new JCheckBox();
         cbSaida.setText("Pausa/Encerramento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.WEST;
         panel3.add(cbSaida, gbc);
     }
@@ -233,4 +264,5 @@ public class Window3 extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
