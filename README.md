@@ -9,7 +9,7 @@ Então, este programa com nome super criativo veio para facilitar um pouco este 
 A intenção dele é bem simples, ao iniciar o programa, ele vai ficar minimizado na barra de tarefas com um ícone de relógio.
 Ao clicar nele, escolha a opção "Apontar o que vou fazer" e então irá abrir esta tela:
 
-![image](https://user-images.githubusercontent.com/5676551/199703726-cc65246e-36b8-4ee6-891e-41a151a129c3.png)
+![image](https://user-images.githubusercontent.com/5676551/201546831-a53b91b8-0409-4a32-9911-a20e3e41e9a2.png)
 
 Descreva sua atividade e aperte em "Ok".
 
