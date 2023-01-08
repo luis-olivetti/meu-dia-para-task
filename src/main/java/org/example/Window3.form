@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.Window3">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="48" y="54" width="471" height="297"/>
+      <xy x="48" y="54" width="473" height="297"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -12,7 +12,10 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="1.0" weighty="1.0"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-855310"/>
+          <enabled value="false"/>
+        </properties>
         <border type="none"/>
         <children>
           <grid id="9538f" layout-manager="GridBagLayout">
@@ -20,7 +23,9 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="1.0"/>
             </constraints>
-            <properties/>
+            <properties>
+              <background color="-855310"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="e7465" class="javax.swing.JButton" binding="buttonOK">
@@ -29,6 +34,7 @@
                   <gridbag weightx="1.0" weighty="1.0"/>
                 </constraints>
                 <properties>
+                  <enabled value="true"/>
                   <text value="OK"/>
                 </properties>
               </component>
@@ -50,8 +56,13 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="1.0" weighty="1.0"/>
         </constraints>
-        <properties/>
-        <border type="none"/>
+        <properties>
+          <background color="-855310"/>
+          <enabled value="true"/>
+        </properties>
+        <border type="none">
+          <color color="-16777216"/>
+        </border>
         <children>
           <component id="8121b" class="javax.swing.JTextField" binding="txfDescription">
             <constraints>
@@ -77,7 +88,7 @@
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <text value="Data/hora inicial (Dica: Use quando esqueceu de iniciar no horário certo)"/>
+              <text value="Data/hora início (Dica: Use quando esqueceu de iniciar no horário certo)"/>
             </properties>
           </component>
           <component id="b201f" class="javax.swing.JLabel">
@@ -86,16 +97,57 @@
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <font/>
               <text value="Descrição"/>
             </properties>
           </component>
           <component id="d55f6" class="javax.swing.JCheckBox" binding="cbSaida">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <background color="-855310"/>
               <text value="Pausa/Encerramento"/>
+            </properties>
+          </component>
+          <hspacer id="2a687">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+          </hspacer>
+          <component id="9064f" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Último lançamento (Descrição e Data/Hora início)"/>
+            </properties>
+          </component>
+          <hspacer id="751b6">
+            <constraints>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="fca7b">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+          </hspacer>
+          <component id="fa26e" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <enabled value="true"/>
             </properties>
           </component>
         </children>
