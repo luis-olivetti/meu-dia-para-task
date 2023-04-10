@@ -3,7 +3,6 @@ package org.example;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -30,7 +29,7 @@ public class Main {
                 if (ww == null) {
                     ww = new Window3();
                     ww.setDefaultCloseOperation(HIDE_ON_CLOSE);
-                    ww.setTitle("O que vou fazer?");
+                    ww.setTitle("Apontamento");
                     ww.setSize(600, 300);
                     ww.setLocationRelativeTo(null);
                 }

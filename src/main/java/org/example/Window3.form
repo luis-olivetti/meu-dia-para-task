@@ -2,9 +2,11 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.Window3">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="48" y="54" width="473" height="297"/>
+      <xy x="48" y="54" width="718" height="329"/>
     </constraints>
-    <properties/>
+    <properties>
+      <font name="DejaVu Sans Mono"/>
+    </properties>
     <border type="none"/>
     <children>
       <grid id="94766" layout-manager="GridBagLayout">
@@ -35,6 +37,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
+                  <font name="DejaVu Sans Mono"/>
                   <text value="OK"/>
                 </properties>
               </component>
@@ -44,6 +47,7 @@
                   <gridbag weightx="1.0" weighty="1.0"/>
                 </constraints>
                 <properties>
+                  <font name="DejaVu Sans Mono"/>
                   <text value="Cancel"/>
                 </properties>
               </component>
@@ -54,11 +58,12 @@
       <grid id="e3588" layout-manager="GridBagLayout">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag top="10" left="10" bottom="10" right="10" weightx="1.0" weighty="1.0" ipadx="50"/>
         </constraints>
         <properties>
           <background color="-855310"/>
           <enabled value="true"/>
+          <font name="DejaVu Sans Mono"/>
         </properties>
         <border type="none">
           <color color="-16777216"/>
@@ -69,25 +74,30 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <gridbag top="5" left="0" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
             </constraints>
-            <properties/>
+            <properties>
+              <font name="DejaVu Sans Mono"/>
+            </properties>
           </component>
           <component id="3de0" class="javax.swing.JTextField" binding="txfInitialDate">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="5" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
-            <properties/>
+            <properties>
+              <font name="DejaVu Sans Mono"/>
+            </properties>
           </component>
           <component id="66b36" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <font name="DejaVu Sans Mono"/>
               <text value="Data/hora início (Dica: Use quando esqueceu de iniciar no horário certo)"/>
             </properties>
           </component>
@@ -97,57 +107,43 @@
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <font/>
+              <font name="DejaVu Sans Mono"/>
               <text value="Descrição"/>
             </properties>
           </component>
           <component id="d55f6" class="javax.swing.JCheckBox" binding="cbSaida">
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <background color="-855310"/>
+              <font name="DejaVu Sans Mono"/>
               <text value="Pausa/Encerramento"/>
             </properties>
           </component>
-          <hspacer id="2a687">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-          </hspacer>
           <component id="9064f" class="javax.swing.JLabel">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="30" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <enabled value="false"/>
+              <font name="DejaVu Sans Mono"/>
               <text value="Último lançamento (Descrição e Data/Hora início)"/>
             </properties>
           </component>
-          <hspacer id="751b6">
-            <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-          </hspacer>
-          <hspacer id="fca7b">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-          </hspacer>
           <component id="fa26e" class="javax.swing.JTextField" binding="textField1" default-binding="true">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="5" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <editable value="false"/>
               <enabled value="true"/>
+              <font name="DejaVu Sans Mono"/>
             </properties>
           </component>
         </children>

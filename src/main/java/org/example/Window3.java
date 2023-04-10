@@ -6,7 +6,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.*;
@@ -25,7 +24,6 @@ public class Window3 extends JDialog {
     private JCheckBox cbSaida;
     private JTextField txfInitialDate;
     private JTextField textField1;
-    private JTable table1;
 
     private static final short CD_PROJETO = 0;
     private static final short CD_RESPONSAVEL = 2;
@@ -49,24 +47,25 @@ public class Window3 extends JDialog {
                 try {
                     config = new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
                     if (config == null) {
-                        throw new RuntimeException("O sistema não foi inicializado, pois não encontrou o arquivo config.json. Verifique!");
+                        throw new RuntimeException("O sistema não foi inicializado, pois não encontrou o arquivo 'config.json'. Verifique!");
                     }
 
                     FileInputStream file = new FileInputStream(getAppPath() + "/apontamentos.xls");
                     HSSFWorkbook workbook = new HSSFWorkbook(file);
-                    Sheet sheet = workbook.getSheetAt(0);
+                    try {
+                        Sheet sheet = workbook.getSheetAt(0);
+                        Row lastRow = sheet.getRow(getLastRowNumber(sheet));
 
-                    Row lastRow = sheet.getRow(sheet.getLastRowNum());
-
-                    if (lastRow.getRowNum() > 0) {
-                        if (lastRow.getCell(COMMENT) != null && lastRow.getCell(DH_INICIO) != null) {
-                            textField1.setText(lastRow.getCell(COMMENT).getStringCellValue() + " | " + lastRow.getCell(DH_INICIO).getStringCellValue());
+                        if (lastRow.getRowNum() > 0) {
+                            if (lastRow.getCell(COMMENT) != null && lastRow.getCell(DH_INICIO) != null) {
+                                textField1.setText(lastRow.getCell(COMMENT).getStringCellValue() + " | " + lastRow.getCell(DH_INICIO).getStringCellValue());
+                            }
                         }
                     }
-
-                    workbook.close();
-                    file.close();
-
+                    finally {
+                        workbook.close();
+                        file.close();
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -105,6 +104,21 @@ public class Window3 extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    private static int getLastRowNumber(Sheet sheet) {
+        int lastRowNumber = 0;
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) {
+                continue;
+            }
+
+            if (row.getCell(DH_INICIO) == null || row.getCell(DH_INICIO).getStringCellValue().isEmpty()) {
+                break;
+            }
+            lastRowNumber++;
+        }
+        return lastRowNumber;
+    }
+
     private void onOK() throws IOException, URISyntaxException, ParseException {
 
         Config config = new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
@@ -116,10 +130,8 @@ public class Window3 extends JDialog {
         HSSFWorkbook workbook = new HSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0);
         try {
-            Row lastRow = sheet.getRow(sheet.getLastRowNum());
-
+            Row lastRow = sheet.getRow(getLastRowNumber(sheet));
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
             Date finalDate = txfInitialDate.getText().isEmpty() ? new Date() : new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(txfInitialDate.getText());
 
             if (cbSaida.isSelected()) {
@@ -127,8 +139,7 @@ public class Window3 extends JDialog {
                     lastRow.createCell(DH_TERMINO).setCellValue(dateFormat.format(finalDate));
                 }
             } else {
-                int newRow = sheet.getLastRowNum() + 1;
-
+                int newRow = getLastRowNumber(sheet) + 1;
                 sheet.createRow(newRow);
                 Row row = sheet.getRow(newRow);
 
@@ -176,7 +187,6 @@ public class Window3 extends JDialog {
 
     public static void main(String[] args) {
         Window3 dialog = new Window3();
-//        dialog.addListener();
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
@@ -207,6 +217,8 @@ public class Window3 extends JDialog {
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
+        Font contentPaneFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, contentPane.getFont());
+        if (contentPaneFont != null) contentPane.setFont(contentPaneFont);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
         panel1.setBackground(new Color(-855310));
@@ -230,6 +242,8 @@ public class Window3 extends JDialog {
         panel1.add(panel2, gbc);
         buttonOK = new JButton();
         buttonOK.setEnabled(true);
+        Font buttonOKFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, buttonOK.getFont());
+        if (buttonOKFont != null) buttonOK.setFont(buttonOKFont);
         buttonOK.setText("OK");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -239,6 +253,8 @@ public class Window3 extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(buttonOK, gbc);
         buttonCancel = new JButton();
+        Font buttonCancelFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, buttonCancel.getFont());
+        if (buttonCancelFont != null) buttonCancel.setFont(buttonCancelFont);
         buttonCancel.setText("Cancel");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
@@ -251,37 +267,50 @@ public class Window3 extends JDialog {
         panel3.setLayout(new GridBagLayout());
         panel3.setBackground(new Color(-855310));
         panel3.setEnabled(true);
+        Font panel3Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, panel3.getFont());
+        if (panel3Font != null) panel3.setFont(panel3Font);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipadx = 50;
+        gbc.insets = new Insets(10, 10, 10, 10);
         contentPane.add(panel3, gbc);
         txfDescription = new JTextField();
+        Font txfDescriptionFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, txfDescription.getFont());
+        if (txfDescriptionFont != null) txfDescription.setFont(txfDescriptionFont);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 0, 0, 0);
         panel3.add(txfDescription, gbc);
         txfInitialDate = new JTextField();
+        Font txfInitialDateFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, txfInitialDate.getFont());
+        if (txfInitialDateFont != null) txfInitialDate.setFont(txfInitialDateFont);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 0, 0, 0);
         panel3.add(txfInitialDate, gbc);
         final JLabel label1 = new JLabel();
+        Font label1Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label1.getFont());
+        if (label1Font != null) label1.setFont(label1Font);
         label1.setText("Data/hora início (Dica: Use quando esqueceu de iniciar no horário certo)");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(label1, gbc);
         final JLabel label2 = new JLabel();
-        Font label2Font = this.$$$getFont$$$(null, -1, -1, label2.getFont());
+        Font label2Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label2.getFont());
         if (label2Font != null) label2.setFont(label2Font);
         label2.setText("Descrição");
         gbc = new GridBagConstraints();
@@ -291,45 +320,37 @@ public class Window3 extends JDialog {
         panel3.add(label2, gbc);
         cbSaida = new JCheckBox();
         cbSaida.setBackground(new Color(-855310));
+        Font cbSaidaFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, cbSaida.getFont());
+        if (cbSaidaFont != null) cbSaida.setFont(cbSaidaFont);
         cbSaida.setText("Pausa/Encerramento");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 0, 0, 0);
+        panel3.add(cbSaida, gbc);
+        final JLabel label3 = new JLabel();
+        label3.setEnabled(false);
+        Font label3Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label3.getFont());
+        if (label3Font != null) label3.setFont(label3Font);
+        label3.setText("Último lançamento (Descrição e Data/Hora início)");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.WEST;
-        panel3.add(cbSaida, gbc);
-        final JPanel spacer1 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel3.add(spacer1, gbc);
-        final JLabel label3 = new JLabel();
-        label3.setText("Último lançamento (Descrição e Data/Hora início)");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(30, 0, 0, 0);
         panel3.add(label3, gbc);
-        final JPanel spacer2 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 9;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel3.add(spacer2, gbc);
-        final JPanel spacer3 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel3.add(spacer3, gbc);
         textField1 = new JTextField();
         textField1.setEditable(false);
         textField1.setEnabled(true);
+        Font textField1Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, textField1.getFont());
+        if (textField1Font != null) textField1.setFont(textField1Font);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = 6;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 0, 0, 0);
         panel3.add(textField1, gbc);
     }
 
