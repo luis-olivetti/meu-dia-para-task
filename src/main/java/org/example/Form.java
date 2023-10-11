@@ -9,30 +9,46 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Window3 extends JDialog {
+public class Form extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField txfDescription;
     private JCheckBox cbSaida;
     private JTextField txfInitialDate;
-    private JTextField textField1;
+    private JTextArea textField1;
+    private JTextField txfJiraCode;
 
     private static final short CD_PROJETO = 0;
     private static final short CD_RESPONSAVEL = 2;
     private static final short DH_INICIO = 3;
     private static final short DH_TERMINO = 4;
+    private static final short EMPTY_COLUMN = 6;
     private static final short CD_EQUIPE = 8;
     private static final short COMMENT = 10;
+    private static final short CD_JIRA = 13;
 
-    public Window3() {
+    public static void main(String[] args) {
+        Form dialog = new Form();
+        dialog.pack();
+        dialog.setVisible(true);
+        System.exit(0);
+    }
+
+    public Form() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -41,30 +57,14 @@ public class Window3 extends JDialog {
             @Override
             public void componentShown(ComponentEvent componentEvent) {
                 super.componentShown(componentEvent);
-                txfInitialDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date().getTime()));
+                initializeInitialDate();
 
-                Config config = null;
                 try {
-                    config = new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
-                    if (config == null) {
-                        throw new RuntimeException("O sistema não foi inicializado, pois não encontrou o arquivo 'config.json'. Verifique!");
-                    }
+                    Config config = loadConfiguration();
+                    ensureConfigIsLoaded(config);
 
-                    FileInputStream file = new FileInputStream(getAppPath() + "/apontamentos.xls");
-                    HSSFWorkbook workbook = new HSSFWorkbook(file);
-                    try {
-                        Sheet sheet = workbook.getSheetAt(0);
-                        Row lastRow = sheet.getRow(getLastRowNumber(sheet));
-
-                        if (lastRow.getRowNum() > 0) {
-                            if (lastRow.getCell(COMMENT) != null && lastRow.getCell(DH_INICIO) != null) {
-                                textField1.setText(lastRow.getCell(COMMENT).getStringCellValue() + " | " + lastRow.getCell(DH_INICIO).getStringCellValue());
-                            }
-                        }
-                    }
-                    finally {
-                        workbook.close();
-                        file.close();
+                    try (HSSFWorkbook workbook = loadWorkbook()) {
+                        displayLatestEntries(workbook);
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -104,6 +104,51 @@ public class Window3 extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    private void initializeInitialDate() {
+        txfInitialDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date().getTime()));
+    }
+
+    private Config loadConfiguration() throws URISyntaxException {
+        return new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
+    }
+
+    private void ensureConfigIsLoaded(Config config) {
+        if (config == null) {
+            throw new RuntimeException("O sistema não foi inicializado, pois não encontrou o arquivo 'config.json'. Verifique!");
+        }
+    }
+
+    private HSSFWorkbook loadWorkbook() throws IOException, URISyntaxException {
+        FileInputStream file = new FileInputStream(getAppPath() + "/apontamentos.xls");
+        return new HSSFWorkbook(file);
+    }
+
+    private void displayLatestEntries(HSSFWorkbook workbook) {
+        Sheet sheet = workbook.getSheetAt(0);
+        Row lastRow = sheet.getRow(getLastRowNumber(sheet));
+        Row penultimateRow = null;
+
+        if (lastRow != null && lastRow.getRowNum() > 0) {
+            penultimateRow = sheet.getRow(lastRow.getRowNum() - 1);
+        }
+
+        clearTextField();
+        updateTextFieldWithRowInfo(lastRow, textField1);
+        updateTextFieldWithRowInfo(penultimateRow, textField1);
+    }
+
+    private void updateTextFieldWithRowInfo(Row row, JTextArea textField) {
+        if (row != null) {
+            if (row.getCell(COMMENT) != null && row.getCell(DH_INICIO) != null) {
+                textField.setText(textField.getText() + "\n" + row.getCell(COMMENT).getStringCellValue() + " | " + row.getCell(DH_INICIO).getStringCellValue());
+            }
+        }
+    }
+
+    private void clearTextField() {
+        textField1.setText("");
+    }
+
     private static int getLastRowNumber(Sheet sheet) {
         int lastRowNumber = 0;
         for (Row row : sheet) {
@@ -126,10 +171,16 @@ public class Window3 extends JDialog {
             return;
         }
 
-        FileInputStream file = new FileInputStream(getAppPath() + "/apontamentos.xls");
-        HSSFWorkbook workbook = new HSSFWorkbook(file);
-        Sheet sheet = workbook.getSheetAt(0);
-        try {
+        String originalFilePath = getAppPath() + "/apontamentos.xls";
+        String backupFilePath = getAppPath() + "/apontamentos_backup.xls";
+        Files.copy(Paths.get(originalFilePath), Paths.get(backupFilePath), StandardCopyOption.REPLACE_EXISTING);
+
+        try (
+                FileInputStream file = new FileInputStream(originalFilePath);
+                HSSFWorkbook workbook = new HSSFWorkbook(file);
+        ) {
+            Sheet sheet = workbook.getSheetAt(0);
+
             Row lastRow = sheet.getRow(getLastRowNumber(sheet));
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date finalDate = txfInitialDate.getText().isEmpty() ? new Date() : new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(txfInitialDate.getText());
@@ -159,18 +210,22 @@ public class Window3 extends JDialog {
                 finalDate.setTime(finalDate.getTime() + milleseconds);
                 row.createCell(DH_INICIO).setCellValue(dateFormat.format(finalDate));
 
-                row.createCell((short) 6).setCellValue(1);
+                row.createCell(EMPTY_COLUMN).setCellValue(1);
                 row.createCell(CD_EQUIPE).setCellValue(config.teamCode);
-                row.createCell(COMMENT).setCellValue(txfDescription.getText());
+
+                String jiraCode = txfJiraCode.getText().trim().toUpperCase();
+                String comment = formatComment(jiraCode, txfDescription.getText().trim().toUpperCase());
+
+                row.createCell(COMMENT).setCellValue(comment);
+                row.createCell(CD_JIRA).setCellValue(jiraCode);
             }
 
-            FileOutputStream fileOut = new FileOutputStream(getAppPath() + "/apontamentos.xls", false);
-            workbook.write(fileOut);
+            try (FileOutputStream fileOut = new FileOutputStream(originalFilePath, false)) {
+                workbook.write(fileOut);
+            }
 
             resetForm();
         } finally {
-            workbook.close();
-            file.close();
             dispose();
         }
     }
@@ -181,15 +236,7 @@ public class Window3 extends JDialog {
     }
 
     private void onCancel() {
-        // add your code here if necessary
         dispose();
-    }
-
-    public static void main(String[] args) {
-        Window3 dialog = new Window3();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
     }
 
     private static String getAppPath() throws URISyntaxException {
@@ -198,6 +245,13 @@ public class Window3 extends JDialog {
             pathJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath();
         }
         return pathJar;
+    }
+
+    private String formatComment(String jiraCode, String description) {
+        return "[" +
+                jiraCode.trim().toUpperCase() +
+                "] - " +
+                description.toUpperCase();
     }
 
     {
@@ -244,7 +298,7 @@ public class Window3 extends JDialog {
         buttonOK.setEnabled(true);
         Font buttonOKFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, buttonOK.getFont());
         if (buttonOKFont != null) buttonOK.setFont(buttonOKFont);
-        buttonOK.setText("OK");
+        buttonOK.setText("Salvar");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -255,7 +309,7 @@ public class Window3 extends JDialog {
         buttonCancel = new JButton();
         Font buttonCancelFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, buttonCancel.getFont());
         if (buttonCancelFont != null) buttonCancel.setFont(buttonCancelFont);
-        buttonCancel.setText("Cancel");
+        buttonCancel.setText("Cancelar");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -294,7 +348,7 @@ public class Window3 extends JDialog {
         if (txfInitialDateFont != null) txfInitialDate.setFont(txfInitialDateFont);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 0, 0);
@@ -302,10 +356,10 @@ public class Window3 extends JDialog {
         final JLabel label1 = new JLabel();
         Font label1Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
-        label1.setText("Data/hora início (Dica: Use quando esqueceu de iniciar no horário certo)");
+        label1.setText("Data/hora início");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(label1, gbc);
@@ -325,7 +379,7 @@ public class Window3 extends JDialog {
         cbSaida.setText("Pausa/Encerramento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 6;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(cbSaida, gbc);
@@ -333,25 +387,42 @@ public class Window3 extends JDialog {
         label3.setEnabled(false);
         Font label3Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label3.getFont());
         if (label3Font != null) label3.setFont(label3Font);
-        label3.setText("Último lançamento (Descrição e Data/Hora início)");
+        label3.setText("Os dois últimos lançamentos");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(30, 0, 0, 0);
         panel3.add(label3, gbc);
-        textField1 = new JTextField();
+        textField1 = new JTextArea();
+        textField1.setBackground(new Color(-778));
+        textField1.setColumns(0);
         textField1.setEditable(false);
         textField1.setEnabled(true);
         Font textField1Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, textField1.getFont());
         if (textField1Font != null) textField1.setFont(textField1Font);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 0, 0);
         panel3.add(textField1, gbc);
+        final JLabel label4 = new JLabel();
+        label4.setText("Código do item no Jira");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(label4, gbc);
+        txfJiraCode = new JTextField();
+        txfJiraCode.setText("NGDPREV-");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel3.add(txfJiraCode, gbc);
     }
 
     /**

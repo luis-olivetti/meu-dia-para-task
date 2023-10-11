@@ -12,7 +12,7 @@ import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
 
 public class Main {
 
-    public static Window3 ww = null;
+    public static Form ww = null;
     public static void main(String[] args) throws URISyntaxException {
         SystemTray systemTray = SystemTray.get();
         if (systemTray == null) {
@@ -27,10 +27,10 @@ public class Main {
             public
             void actionPerformed(final ActionEvent e) {
                 if (ww == null) {
-                    ww = new Window3();
+                    ww = new Form();
                     ww.setDefaultCloseOperation(HIDE_ON_CLOSE);
                     ww.setTitle("Apontamento");
-                    ww.setSize(600, 300);
+                    ww.setSize(600, 400);
                     ww.setLocationRelativeTo(null);
                 }
 
