@@ -1,5 +1,7 @@
 {
-  "projectCode": "IT_BRKAMBIENTAL",
+  "projectCode": "IT_OMNI_BANCO",
   "username": "LUIS.OLIVETTI",
-  "teamCode": 380
+  "teamCode": 466,
+  "defaultCode": "P20-",
+  "tip": "Diária: P20-2740 | Refino: P20-2741 | Plan: P20-2742"
 }

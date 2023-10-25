@@ -31,6 +31,7 @@ public class Form extends JDialog {
     private JTextField txfInitialDate;
     private JTextArea textField1;
     private JTextField txfJiraCode;
+    private JLabel lblTip;
 
     private static final short CD_PROJETO = 0;
     private static final short CD_RESPONSAVEL = 2;
@@ -62,6 +63,9 @@ public class Form extends JDialog {
                 try {
                     Config config = loadConfiguration();
                     ensureConfigIsLoaded(config);
+
+                    defineDefaultCode(config.defaultCode);
+                    defineTip(config.tip);
 
                     try (HSSFWorkbook workbook = loadWorkbook()) {
                         displayLatestEntries(workbook);
@@ -106,6 +110,14 @@ public class Form extends JDialog {
 
     private void initializeInitialDate() {
         txfInitialDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date().getTime()));
+    }
+
+    private void defineDefaultCode(String value) {
+        txfJiraCode.setText(value);
+    }
+
+    private void defineTip(String value) {
+        lblTip.setText(value);
     }
 
     private Config loadConfiguration() throws URISyntaxException {
@@ -273,10 +285,13 @@ public class Form extends JDialog {
         contentPane.setLayout(new GridBagLayout());
         Font contentPaneFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, contentPane.getFont());
         if (contentPaneFont != null) contentPane.setFont(contentPaneFont);
+        contentPane.setMaximumSize(new Dimension(800, 500));
+        contentPane.setMinimumSize(new Dimension(800, 500));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
         panel1.setBackground(new Color(-855310));
         panel1.setEnabled(false);
+        panel1.setOpaque(false);
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -288,6 +303,7 @@ public class Form extends JDialog {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridBagLayout());
         panel2.setBackground(new Color(-855310));
+        panel2.setOpaque(false);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -323,6 +339,7 @@ public class Form extends JDialog {
         panel3.setEnabled(true);
         Font panel3Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, panel3.getFont());
         if (panel3Font != null) panel3.setFont(panel3Font);
+        panel3.setOpaque(false);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -338,6 +355,7 @@ public class Form extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -349,6 +367,7 @@ public class Form extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 0, 0);
@@ -360,6 +379,7 @@ public class Form extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 4;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(label1, gbc);
@@ -370,16 +390,21 @@ public class Form extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         panel3.add(label2, gbc);
         cbSaida = new JCheckBox();
+        cbSaida.setActionCommand("Pausa/Encerramento  ");
         cbSaida.setBackground(new Color(-855310));
+        cbSaida.setContentAreaFilled(false);
         Font cbSaidaFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, cbSaida.getFont());
         if (cbSaidaFont != null) cbSaida.setFont(cbSaidaFont);
+        cbSaida.setOpaque(false);
         cbSaida.setText("Pausa/Encerramento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(cbSaida, gbc);
@@ -391,6 +416,7 @@ public class Form extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 7;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(30, 0, 0, 0);
         panel3.add(label3, gbc);
@@ -401,28 +427,48 @@ public class Form extends JDialog {
         textField1.setEnabled(true);
         Font textField1Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, textField1.getFont());
         if (textField1Font != null) textField1.setFont(textField1Font);
+        textField1.setOpaque(false);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 8;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 0, 0);
         panel3.add(textField1, gbc);
         final JLabel label4 = new JLabel();
-        label4.setText("Código do item no Jira");
+        Font label4Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label4.getFont());
+        if (label4Font != null) label4.setFont(label4Font);
+        label4.setText("Código (Jira)");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         panel3.add(label4, gbc);
         txfJiraCode = new JTextField();
-        txfJiraCode.setText("NGDPREV-");
+        txfJiraCode.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(txfJiraCode, gbc);
+        lblTip = new JLabel();
+        lblTip.setEnabled(true);
+        Font lblTipFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, lblTip.getFont());
+        if (lblTipFont != null) lblTip.setFont(lblTipFont);
+        lblTip.setForeground(new Color(-16777216));
+        lblTip.setText("Defina um dica no arquivo de configurações");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(0, 5, 0, 0);
+        panel3.add(lblTip, gbc);
+        label1.setLabelFor(txfInitialDate);
+        label2.setLabelFor(txfDescription);
+        label4.setLabelFor(txfJiraCode);
     }
 
     /**

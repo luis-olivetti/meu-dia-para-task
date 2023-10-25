@@ -3,6 +3,7 @@ package org.example;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -30,7 +31,8 @@ public class Main {
                     ww = new Form();
                     ww.setDefaultCloseOperation(HIDE_ON_CLOSE);
                     ww.setTitle("Apontamento");
-                    ww.setSize(600, 400);
+                    ww.setSize(800, 500);
+                    ww.setResizable(false);
                     ww.setLocationRelativeTo(null);
                 }
 
@@ -46,6 +48,12 @@ public class Main {
                 //System.exit(0);  not necessary if all non-daemon threads have stopped.
             }
         }));
+
+        try {
+            UIManager.setLookAndFeel("com.formdev.flatlaf.themes.FlatMacLightLaf");
+        } catch (Exception ex) {
+            // Handle exception
+        }
     }
 
     private static String getAppPath() throws URISyntaxException {
