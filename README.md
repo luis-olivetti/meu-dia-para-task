@@ -1,35 +1,58 @@
-# meu-dia-para-task
-## Objetivo
+# 🕒 Meu Dia para TASK 🗂️
 
-Vai iniciar uma atividade no seu dia e depois precisa fazer o controle do horário consumido nela?
-Organiza seus horários em um bloco de notas e depois precisa passar para uma planilha?
+---
 
-Então, este programa com nome super criativo veio para facilitar um pouco este trabalho :)
+## 🎯 Objetivo
 
-A intenção dele é bem simples, ao iniciar o programa, ele vai ficar minimizado na barra de tarefas com um ícone de relógio.
-Ao clicar nele, escolha a opção "Apontar o que vou fazer" e então irá abrir esta tela:
+**O problema:**
+Você começa uma atividade e depois luta para controlar o tempo gasto? Escreve seus horários em um bloco de notas e depois tem que transferir tudo para uma planilha?
 
-![image](https://user-images.githubusercontent.com/5676551/201546831-a53b91b8-0409-4a32-9911-a20e3e41e9a2.png)
+**A solução:**
+Apresentando "Meu Dia para TASK", a ferramenta que transforma a gestão do seu tempo em um processo super fluído!
 
-Descreva sua atividade e aperte em "Ok".
+Com uma proposta descomplicada, assim que iniciado, o programa discretamente repousa na sua barra de tarefas com um ícone de relógio. Ao clicar, simplesmente selecione "Apontar o que vou fazer" e voilà:
 
-Vai almoçar/encerrar o dia?
-Então marque a opção "Pausa/Encerramento".
+![Tela do Programa](src/main/resources/img.png)
 
-## Configuração
+Registre sua atividade e clique em "Salvar".
 
-Necessário instalar o Java para executar o programa. </br>
-https://www.java.com/pt-BR/download/manual.jsp
+Vai tirar uma pausa ou encerrar o dia? Temos um botão para isso: "Pausa/Encerramento".
 
-Existe um arquivo "config.json" que possui as seguintes opções: </br>
-"projectCode" -> Código do projeto no TASK </br>
-"username" -> Usuário utilizado no TASK </br>
-"teamCode" -> Código da equipe no TASK </br>
+---
 
-## Download
+## 🚀 Configuração
 
-Acesse este link https://github.com/luis-olivetti/meu-dia-para-task/releases e escolha a última versão.
+### ☕ Java
+É fundamental ter o Java instalado para executar a ferramenta.
+[**Baixe aqui**](https://www.java.com/pt-BR/download/manual.jsp)
 
-## Gerando .jar
+### 🔧 Config.json
+No coração do programa, temos o arquivo "config.json". Ele contém:
 
-Maven > Execute Maven Goal: `mvn clean compile assembly:single`
+- **projectCode:** Código do seu projeto no TASK.
+- **username:** Seu usuário no TASK.
+- **teamCode:** Código da sua equipe no TASK.
+- **defaultCode:** Padrão comum dos códigos de ferramentas.
+- **tip:** Dica ao lado do campo 'Código (Jira)'. Ideal para listar códigos frequentemente usados.
+
+---
+
+## 📥 Download
+
+Pronto para dar um boost na sua produtividade?
+[**Baixe a última versão aqui**](https://github.com/luis-olivetti/meu-dia-para-task/releases)
+
+---
+
+## 🏭 Gerando .jar
+
+Usando o Maven, execute o seguinte comando: 
+
+```shell
+mvn clean compile assembly:single
+```
+---
+
+🌟 Dê adeus à gestão manual do seu tempo e deixe "Meu Dia para TASK" transformar seu dia a dia! 🌟
+
+---

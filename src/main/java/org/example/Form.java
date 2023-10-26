@@ -29,7 +29,7 @@ public class Form extends JDialog {
     private JTextField txfDescription;
     private JCheckBox cbSaida;
     private JTextField txfInitialDate;
-    private JTextArea textField1;
+    private JTextArea txfLastData;
     private JTextField txfJiraCode;
     private JLabel lblTip;
 
@@ -76,19 +76,20 @@ public class Form extends JDialog {
             }
         });
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    onOK();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
+        buttonOK.addActionListener(e -> {
+            try {
+                onOK();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         });
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
+        buttonCancel.addActionListener(e -> onCancel());
+
+        txfDescription.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                txfDescription.setText(txfDescription.getText().toUpperCase());
             }
         });
 
@@ -101,11 +102,7 @@ public class Form extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     private void initializeInitialDate() {
@@ -144,21 +141,33 @@ public class Form extends JDialog {
             penultimateRow = sheet.getRow(lastRow.getRowNum() - 1);
         }
 
-        clearTextField();
-        updateTextFieldWithRowInfo(lastRow, textField1);
-        updateTextFieldWithRowInfo(penultimateRow, textField1);
+        clearLastData();
+        updateLastDataWithRowInfo(lastRow, txfLastData);
+        updateLastDataWithRowInfo(penultimateRow, txfLastData);
     }
 
-    private void updateTextFieldWithRowInfo(Row row, JTextArea textField) {
-        if (row != null) {
-            if (row.getCell(COMMENT) != null && row.getCell(DH_INICIO) != null) {
-                textField.setText(textField.getText() + "\n" + row.getCell(COMMENT).getStringCellValue() + " | " + row.getCell(DH_INICIO).getStringCellValue());
+    private void updateLastDataWithRowInfo(Row row, JTextArea lastData) {
+        if (row == null) {
+            return;
+        }
+
+        if (row.getCell(COMMENT) != null && row.getCell(DH_INICIO) != null) {
+            String text = lastData.getText()
+                    + "\n"
+                    + row.getCell(DH_INICIO).getStringCellValue()
+                    + " | "
+                    + row.getCell(COMMENT).getStringCellValue();
+
+            if (text.startsWith("\n")) {
+                text = text.substring(1);
             }
+
+            lastData.setText(text);
         }
     }
 
-    private void clearTextField() {
-        textField1.setText("");
+    private void clearLastData() {
+        txfLastData.setText("");
     }
 
     private static int getLastRowNumber(Sheet sheet) {
@@ -189,7 +198,7 @@ public class Form extends JDialog {
 
         try (
                 FileInputStream file = new FileInputStream(originalFilePath);
-                HSSFWorkbook workbook = new HSSFWorkbook(file);
+                HSSFWorkbook workbook = new HSSFWorkbook(file)
         ) {
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -409,7 +418,7 @@ public class Form extends JDialog {
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(cbSaida, gbc);
         final JLabel label3 = new JLabel();
-        label3.setEnabled(false);
+        label3.setEnabled(true);
         Font label3Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label3.getFont());
         if (label3Font != null) label3.setFont(label3Font);
         label3.setText("Os dois últimos lançamentos");
@@ -420,22 +429,22 @@ public class Form extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(30, 0, 0, 0);
         panel3.add(label3, gbc);
-        textField1 = new JTextArea();
-        textField1.setBackground(new Color(-778));
-        textField1.setColumns(0);
-        textField1.setEditable(false);
-        textField1.setEnabled(true);
-        Font textField1Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, textField1.getFont());
-        if (textField1Font != null) textField1.setFont(textField1Font);
-        textField1.setOpaque(false);
+        txfLastData = new JTextArea();
+        txfLastData.setBackground(new Color(-778));
+        txfLastData.setColumns(0);
+        txfLastData.setEditable(false);
+        txfLastData.setEnabled(true);
+        Font txfLastDataFont = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, txfLastData.getFont());
+        if (txfLastDataFont != null) txfLastData.setFont(txfLastDataFont);
+        txfLastData.setOpaque(false);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 8;
         gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 0, 0);
-        panel3.add(textField1, gbc);
+        panel3.add(txfLastData, gbc);
         final JLabel label4 = new JLabel();
         Font label4Font = this.$$$getFont$$$("DejaVu Sans Mono", -1, -1, label4.getFont());
         if (label4Font != null) label4.setFont(label4Font);
@@ -468,6 +477,7 @@ public class Form extends JDialog {
         panel3.add(lblTip, gbc);
         label1.setLabelFor(txfInitialDate);
         label2.setLabelFor(txfDescription);
+        label3.setLabelFor(txfLastData);
         label4.setLabelFor(txfJiraCode);
     }
 
