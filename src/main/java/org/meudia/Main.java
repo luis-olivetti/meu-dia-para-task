@@ -2,12 +2,14 @@ package org.meudia;
 
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
+import org.apache.commons.compress.utils.IOUtils;
 import org.meudia.ui.Timekeeping;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.InputStream;
 
 import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
-import static org.meudia.commons.helper.AppPathHelper.getAppPath;
 
 public class Main {
 
@@ -19,7 +21,8 @@ public class Main {
         }
 
         systemTray.installShutdownHook();
-        systemTray.setImage(getAppPath() + "/clock.png");
+
+        loadIconOnSystenTray(systemTray);
 
         systemTray.getMenu().add(new MenuItem("Apontar o que vou fazer", actionEvent -> {
             if (timekeepingForm == null) {
@@ -41,5 +44,19 @@ public class Main {
         } catch (Exception ex) {
             throw new RuntimeException("Falha ao definir o tema FlatLaf!");
         }
+    }
+
+    private static void loadIconOnSystenTray(SystemTray systemTray) {
+        InputStream imageStream = Main.class.getResourceAsStream("/clock.png");
+        Image image;
+        try {
+            if (imageStream == null) {
+                throw new Exception("Não foi possível carregar a imagem do ícone!");
+            }
+            image = Toolkit.getDefaultToolkit().createImage(IOUtils.toByteArray(imageStream));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        systemTray.setImage(image);
     }
 }
