@@ -3,5 +3,12 @@
   "username": "LUIS.OLIVETTI",
   "teamCode": 466,
   "defaultCode": "P20-",
-  "tip": "Diária: P20-2740 | Refino: P20-2741 | Plan: P20-2742"
+  "tip": "Diária: P20-2740 | Refino: P20-2741 | Plan: P20-2742",
+  "tasksMap": [
+    {
+      "key": "P20-2740",
+      "taskCode": 9555,
+      "taskTypeCode": 56
+    }
+  ]
 }

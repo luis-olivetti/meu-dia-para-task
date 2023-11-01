@@ -34,6 +34,7 @@ No coração do programa, temos o arquivo "config.json". Ele contém:
 - **teamCode:** Código da sua equipe no TASK.
 - **defaultCode:** Padrão comum dos códigos de ferramentas.
 - **tip:** Dica ao lado do campo 'Código (Jira)'. Ideal para listar códigos frequentemente usados.
+- **tasksMap:** Mapeamento de códigos de ferramentas para códigos de tarefas no TASK.
 
 ---
 

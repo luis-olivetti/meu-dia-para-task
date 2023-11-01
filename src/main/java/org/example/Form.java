@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.function.Function;
 
 public class Form extends JDialog {
     private JPanel contentPane;
@@ -34,10 +35,12 @@ public class Form extends JDialog {
     private JLabel lblTip;
 
     private static final short CD_PROJETO = 0;
+    private static final short CD_TAREFA = 1;
     private static final short CD_RESPONSAVEL = 2;
     private static final short DH_INICIO = 3;
     private static final short DH_TERMINO = 4;
     private static final short EMPTY_COLUMN = 6;
+    private static final short CD_TIPOTAREFA = 7;
     private static final short CD_EQUIPE = 8;
     private static final short COMMENT = 10;
     private static final short CD_JIRA = 13;
@@ -85,13 +88,6 @@ public class Form extends JDialog {
         });
 
         buttonCancel.addActionListener(e -> onCancel());
-
-        txfDescription.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                txfDescription.setText(txfDescription.getText().toUpperCase());
-            }
-        });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -216,6 +212,19 @@ public class Form extends JDialog {
                 Row row = sheet.getRow(newRow);
 
                 row.createCell(CD_PROJETO).setCellValue(config.projectCode);
+
+                String searchKey = txfJiraCode.getText().trim().toUpperCase();
+
+                Long taskCode = getTaskAttribute(searchKey, MapTask::getTaskCode, config);
+                if (taskCode != null) {
+                    row.createCell(CD_TAREFA).setCellValue(taskCode);
+                }
+
+                Long taskTypeCode = getTaskAttribute(searchKey, MapTask::getTaskTypeCode, config);
+                if (taskTypeCode != null) {
+                    row.createCell(CD_TIPOTAREFA).setCellValue(taskTypeCode);
+                }
+
                 row.createCell(CD_RESPONSAVEL).setCellValue(config.username);
 
                 int milleseconds = 0;
@@ -249,6 +258,20 @@ public class Form extends JDialog {
         } finally {
             dispose();
         }
+    }
+
+    private Long getTaskAttribute(String key, Function<MapTask, Object> attributeGetter, Config config) {
+        return config.tasksMap.stream()
+            .filter(task -> key.equals(task.getKey()))
+            .findFirst()
+            .map(task -> {
+                Object attributeValue = attributeGetter.apply(task);
+                if (attributeValue != null) {
+                    return Long.valueOf(attributeValue.toString());
+                }
+                return null;
+            })
+            .orElse(null);
     }
 
     private void resetForm() {
