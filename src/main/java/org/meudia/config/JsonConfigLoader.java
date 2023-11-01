@@ -1,7 +1,8 @@
-package org.example;
+package org.meudia.config;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.meudia.domain.Config;
 
 import javax.json.Json;
 import javax.json.JsonReader;
@@ -10,7 +11,7 @@ import javax.swing.*;
 import java.io.FileReader;
 import java.io.StringWriter;
 
-public class ConfigFacade {
+public class JsonConfigLoader {
     public Config getConfiguration(String path) {
         return getConfigByFile(path);
     }

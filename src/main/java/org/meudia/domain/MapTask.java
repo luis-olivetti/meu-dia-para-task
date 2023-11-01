@@ -1,4 +1,4 @@
-package org.example;
+package org.meudia.domain;
 
 import lombok.Data;
 

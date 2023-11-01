@@ -1,19 +1,20 @@
-package org.example;
+package org.meudia.ui;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.meudia.config.JsonConfigLoader;
+import org.meudia.domain.Config;
+import org.meudia.domain.MapTask;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -23,36 +24,30 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.function.Function;
 
-public class Form extends JDialog {
+import static org.meudia.commons.constants.SpreadsheetConstants.*;
+import static org.meudia.commons.helper.AppPathHelper.getAppPath;
+
+public class Timekeeping extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField txfDescription;
-    private JCheckBox cbSaida;
     private JTextField txfInitialDate;
     private JTextArea txfLastData;
     private JTextField txfJiraCode;
+    private JCheckBox cbSaida;
     private JLabel lblTip;
-
-    private static final short CD_PROJETO = 0;
-    private static final short CD_TAREFA = 1;
-    private static final short CD_RESPONSAVEL = 2;
-    private static final short DH_INICIO = 3;
-    private static final short DH_TERMINO = 4;
-    private static final short EMPTY_COLUMN = 6;
-    private static final short CD_TIPOTAREFA = 7;
-    private static final short CD_EQUIPE = 8;
-    private static final short COMMENT = 10;
-    private static final short CD_JIRA = 13;
+    private static String appPath;
 
     public static void main(String[] args) {
-        Form dialog = new Form();
-        dialog.pack();
-        dialog.setVisible(true);
+        displayFormDialog();
+
         System.exit(0);
     }
 
-    public Form() {
+    public Timekeeping() {
+        appPath = getAppPath();
+
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -67,8 +62,8 @@ public class Form extends JDialog {
                     Config config = loadConfiguration();
                     ensureConfigIsLoaded(config);
 
-                    defineDefaultCode(config.defaultCode);
-                    defineTip(config.tip);
+                    defineDefaultCode(config.getDefaultCode());
+                    defineTip(config.getTip());
 
                     try (HSSFWorkbook workbook = loadWorkbook()) {
                         displayLatestEntries(workbook);
@@ -101,6 +96,12 @@ public class Form extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    private static void displayFormDialog() {
+        Timekeeping userFormDialog = new Timekeeping();
+        userFormDialog.pack();
+        userFormDialog.setVisible(true);
+    }
+
     private void initializeInitialDate() {
         txfInitialDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date().getTime()));
     }
@@ -113,8 +114,8 @@ public class Form extends JDialog {
         lblTip.setText(value);
     }
 
-    private Config loadConfiguration() throws URISyntaxException {
-        return new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
+    private Config loadConfiguration() {
+        return new JsonConfigLoader().getConfiguration(appPath + "/config.json");
     }
 
     private void ensureConfigIsLoaded(Config config) {
@@ -123,8 +124,8 @@ public class Form extends JDialog {
         }
     }
 
-    private HSSFWorkbook loadWorkbook() throws IOException, URISyntaxException {
-        FileInputStream file = new FileInputStream(getAppPath() + "/apontamentos.xls");
+    private HSSFWorkbook loadWorkbook() throws IOException {
+        FileInputStream file = new FileInputStream(appPath + "/apontamentos.xls");
         return new HSSFWorkbook(file);
     }
 
@@ -181,15 +182,15 @@ public class Form extends JDialog {
         return lastRowNumber;
     }
 
-    private void onOK() throws IOException, URISyntaxException, ParseException {
+    private void onOK() throws IOException, ParseException {
 
-        Config config = new ConfigFacade().getConfiguration(getAppPath() + "/config.json");
+        Config config = new JsonConfigLoader().getConfiguration(appPath + "/config.json");
         if (config == null) {
             return;
         }
 
-        String originalFilePath = getAppPath() + "/apontamentos.xls";
-        String backupFilePath = getAppPath() + "/apontamentos_backup.xls";
+        String originalFilePath = appPath + "/apontamentos.xls";
+        String backupFilePath = appPath + "/apontamentos_backup.xls";
         Files.copy(Paths.get(originalFilePath), Paths.get(backupFilePath), StandardCopyOption.REPLACE_EXISTING);
 
         try (
@@ -211,7 +212,7 @@ public class Form extends JDialog {
                 sheet.createRow(newRow);
                 Row row = sheet.getRow(newRow);
 
-                row.createCell(CD_PROJETO).setCellValue(config.projectCode);
+                row.createCell(CD_PROJETO).setCellValue(config.getProjectCode());
 
                 String searchKey = txfJiraCode.getText().trim().toUpperCase();
 
@@ -225,7 +226,7 @@ public class Form extends JDialog {
                     row.createCell(CD_TIPOTAREFA).setCellValue(taskTypeCode);
                 }
 
-                row.createCell(CD_RESPONSAVEL).setCellValue(config.username);
+                row.createCell(CD_RESPONSAVEL).setCellValue(config.getUsername());
 
                 int milleseconds = 0;
 
@@ -241,7 +242,7 @@ public class Form extends JDialog {
                 row.createCell(DH_INICIO).setCellValue(dateFormat.format(finalDate));
 
                 row.createCell(EMPTY_COLUMN).setCellValue(1);
-                row.createCell(CD_EQUIPE).setCellValue(config.teamCode);
+                row.createCell(CD_EQUIPE).setCellValue(config.getTeamCode());
 
                 String jiraCode = txfJiraCode.getText().trim().toUpperCase();
                 String comment = formatComment(jiraCode, txfDescription.getText().trim().toUpperCase());
@@ -261,7 +262,7 @@ public class Form extends JDialog {
     }
 
     private Long getTaskAttribute(String key, Function<MapTask, Object> attributeGetter, Config config) {
-        return config.tasksMap.stream()
+        return config.getTasksMap().stream()
             .filter(task -> key.equals(task.getKey()))
             .findFirst()
             .map(task -> {
@@ -281,14 +282,6 @@ public class Form extends JDialog {
 
     private void onCancel() {
         dispose();
-    }
-
-    private static String getAppPath() throws URISyntaxException {
-        String pathJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
-        if (pathJar.contains(".jar")) {
-            pathJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath();
-        }
-        return pathJar;
     }
 
     private String formatComment(String jiraCode, String description) {
